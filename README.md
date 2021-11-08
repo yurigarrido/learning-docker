@@ -5,7 +5,7 @@ Ao iniciar este projeto, você concorda com as diretrizes do Código de Ética e
 ---
 
 # Boas vindas ao repositório do projeto Docker Todo List!
-betrybe/sd-013-a-project-docker-todo-list
+
 Você já usa o GitHub diariamente para desenvolver os exercícios, certo? Agora, para desenvolver os projetos, você deverá seguir as instruções a seguir. Fique atento a cada passo, e se tiver qualquer dúvida, nos envie por _Slack_! #vqv 🚀
 
 Aqui você vai encontrar os detalhes de como estruturar o desenvolvimento do seu projeto a partir deste repositório, utilizando uma branch específica e um _Pull Request_ para colocar seus códigos.
@@ -61,6 +61,7 @@ Neste projeto, você será capaz de:
 
 # Entregáveis
 
+
 Temos, neste projeto, uma série de comandos com diferentes níveis de complexidade que devem ser resolvidos cada um em seu arquivo próprio.
 
 1. Leia o requisito e crie um arquivo chamado `commandN.dc` no diretório `docker-commands`, em que N é o número do desafio.
@@ -73,14 +74,43 @@ docker network inspect bridge
 3. Faça isso até finalizar todos os requisitos e depois siga as instruções de como entregar o projeto em [**Instruções para entregar seu projeto**](#instruções-para-entregar-seu-projeto).
 
 4. Os arquivos principais do projeto estão na pasta `docker`, na raiz do projeto, nele estão contidos:
-- Pasta `docker-commands`: Onde ficarão os comandos exigidos pelos requisitos, **⚠️ importante: você deve assumir que essa é a pasta raiz dos comandos.**
+- Pasta `docker-commands`: Onde ficarão os comandos exigidos pelos requisitos; 
+  - **⚠️ Importante: você deve assumir que essa é a pasta raiz para os comandos.**
+  - Por exemplo, se você precisa referenciar um caminho em um comando, você deve assumir que sua pasta raiz esta partindo de `./docker`
 - Pasta `todo-app`: Onde fica nossa **pseudo-aplicação**, que servirá como base para nossos `Dockerfile`s e `Compose`;
-  - **⚠️ Essa aplicação conta com um **README.md** próprio, que deve ser usado como referência na criação dos scripts!**
-- A raiz dessa pasta deve receber o arquivo `docker-compose.yml` para orquestração de aplicações
+  - **⚠️ Essa aplicação conta com um [**README.md**](./docker/todo-app/README.md) próprio, que deve ser usado como referência na criação dos scripts!**
+- A pasta `docker` deve receber o arquivo `docker-compose.yml` para orquestração de aplicações
 
 5. Para entregar o seu projeto você deverá criar um _Pull Request_ neste repositório. Este _Pull Request_ deverá conter no diretório `docker-commands` os arquivos `command01.dc`, `command02.dc` e assim por diante até o `command12.dc`, que conterão seu comando `docker` de cada requisito, respectivamente.
 
 **⚠️ É importante que seus arquivos tenham exatamente estes nomes! ⚠️**
+
+### Sobre o avaliador
+
+O avaliador cria um **container especial** para executar a avaliação de `comandos`, `Dockerfiles` e `docker-compose`. 
+
+Esse container é temporário, por tanto, ao começar ou terminar os testes locais, o avaliador remove automaticamente esse mesmo container, assim como seu volume associado.
+
+O volume desse container, mapeia a pasta `./docker/` do seu projeto, para dentro dele, ou seja, a raiz desse container vai conter as pastas `./docker-commands/`, `./todo-app/` e seu arquivo `./docker-compose.yml`, quando estiver pronto.
+
+Isso significa, que se pudessemos olhar para dentro do container de avaliação, veriamos a seguinte estrutura:
+
+```bash
+.
+├── docker-commands
+└── todo-app
+    ├── back-end
+    │   └── *
+    ├── front-end
+    │   └── *
+    └── tests
+        └── *
+```
+
+Por tanto, é importante entender que os comandos docker escritos em `command*.dc` estarão rodando dentro desse container especial (e não a partir da raiz do projeto, como em projetos anteriores).
+
+---
+
 
 ## O que deverá ser desenvolvido
 
@@ -180,13 +210,17 @@ Para **"entregar"** seu projeto, siga os passos a seguir:
 * Vá até a página **DO SEU** _Pull Request_, adicione a label de _"code-review"_ e marque seus colegas
   * No menu à direita, clique no _link_ **"Labels"** e escolha a _label_ **code-review**
   * No menu à direita, clique no _link_ **"Assignees"** e escolha **o seu usuário**
-  * No menu à direita, clique no _link_ **"Reviewers"** e digite `students`, selecione o time `tryber/students-sd-013-a`
+  * No menu à direita, clique no _link_ **"Reviewers"** e digite `students`, selecione o time `tryber/students-sd-0x`
 
 Se ainda houver alguma dúvida sobre como entregar seu projeto, [aqui tem um video explicativo](https://vimeo.com/362189205).
 
 ---
 
 # Como desenvolver
+
+**⚠️ Importante ⚠️**
+Para que o avaliador funcione corretamente, é importante que a instalação do Docker (vista no dia 1) seja feita corretamente.
+Aqui também é importante que o seu usuário esteja no grupo `docker` (para que não haja a necessidade de rodar comandos utilizando o `sudo`)
 
 Nesse projeto, temos uma aplicação completa *(Um aplicativo de tarefas)* que precisa ser conteinerizada para funcionar, aqui, você desenvolver os respectivos arquivos de configuração para cada frente específica: `Front-end`, `Back-end` e no nosso caso um aplicativo de teste que deve validar se as aplicações estão se comunicando.
 
@@ -288,10 +322,12 @@ Não  utilize a função `.only` ou `.skip` após o describe. Os testes precisam
 
 #### 9. Gere uma build a partir do Dockerfile do `back-end` do `todo-app` nomeando a imagem para `todobackend`.
 
+  **Dica:** O comando `ADD` do Dockerfile, também pode ser utilizado para descompactar arquivos dentro do container.
+
    - **O que será testado:** 
-    - Se existe um arquivo `Dockerfile` em `./docker/todo-app/back-end`:
-      - O arquivo Dockerfile deve ficar na raiz da pasta `back-end`;
-      - O Dockerfile pode rodar uma imagem `node` com a versão `alpine`;
+    - Se existe um arquivo `Dockerfile` em `./docker/todo-app/back-end/`:
+      - O Dockerfile deve rodar uma imagem `node` com a versão `alpine`;
+        - Lembre-se de consultar o README do `todo-app` para validar os requisitos da aplicação; 
       - Deve estar com a porta `3001` exposta;
       - Deve adicionar o arquivo `node_modules.tar.gz` a imagem;
       - Deve copiar todos os arquivos da pasta `back-end` para a imagem;
@@ -300,10 +336,12 @@ Não  utilize a função `.only` ou `.skip` após o describe. Os testes precisam
 
 #### 10. Gere uma build a partir do Dockerfile do `front-end` do `todo-app` nomeando a imagem para `todofrontend`.
 
+  **Dica:** O comando `ADD` do Dockerfile, também pode ser utilizado para descompactar arquivos dentro do container.
+ 
   - **O que será testado:** 
-    - Se existe um arquivo `Dockerfile` em `./docker/todo-app/front-end`:
-      - O arquivo `Dockerfile` deve ficar na raiz da pasta `front-end`;
-      - O `Dockerfile` pode rodar uma imagem `node` com a versão `alpine`;
+    - Se existe um arquivo `Dockerfile` em `./docker/todo-app/front-end/`:
+      - O `Dockerfile` deve rodar uma imagem `node` com a versão `alpine`;
+        - Lembre-se de consultar o README do `todo-app` para validar os requisitos da aplicação; 
       - Deve estar com a porta `3000` exposta;
       - Deve adicionar o arquivo `node_modules.tar.gz` a imagem, de maneira que ele seja extraído dentro do `container`;
       - Deve copiar todos os arquivos da pasta `front-end` para a imagem;
@@ -312,10 +350,13 @@ Não  utilize a função `.only` ou `.skip` após o describe. Os testes precisam
 
 #### 11.Gere uma build a partir do Dockerfile dos `testes` do `todo-app` nomeando a imagem para `todotests`.
 
+  **Dica:** O comando `ADD` do Dockerfile, também pode ser utilizado para descompactar arquivos dentro do container.
+  
+  **Observação**: A aplicação `todotests` só funciona corretamente se estiver dockerizada e dentro de uma rede docker configurada corretamente.
+
   - **O que será testado:** 
-      - Se existe um arquivo `Dockerfile` em `./docker/todo-app/tests`:
-        - O arquivo Dockerfile deve ficar na raiz da pasta `tests`;
-        - O Dockerfile pode rodar uma imagem `mjgargani/puppeteer:trybe1.0` para que os tests funcionem;
+      - Se existe um arquivo `Dockerfile` em `./docker/todo-app/tests/`:
+        - O Dockerfile deve rodar a imagem `mjgargani/puppeteer:trybe1.0` para que os testes funcionem;
         - Deve adicionar o arquivo `node_modules.tar.gz` a imagem;
         - Deve copiar todos os arquivos da pasta `tests` para a imagem;
         - Ao iniciar a imagem deve rodar o comando `npm test`;
@@ -327,22 +368,25 @@ Não  utilize a função `.only` ou `.skip` após o describe. Os testes precisam
 
 #### 12. Suba uma orquestração em segundo plano com o docker-compose de forma que `backend`, `frontend` e `tests` consigam se comunicar.
 
+  **Dica:** use as imagens já **"buildadas"** que foram executadas nos requisitos 9,10 e 11 para a criação do compose.
+
   - **O que será testado:** 
-      - Se existe um arquivo `docker-compose` em `./docker`:
-        - O arquivo docker-compose deve ficar na raiz da pasta `docker`;
-        - O docker-compose pode rodar na versão 3.
+      - Se existe um arquivo `docker-compose.yml` na pasta `./docker/`:
+        - O docker-compose deve rodar na versão 3.
 
       - **tests**
-        - O `todotests` deve ter como dependencia o `todofrontend`, `todobackend`;
-        - Deve ter uma variável de ambiente `FRONT_HOST` recebendo como valor o `todobackend`.
+        - O container de `todotests` deve ter como dependencia os containers `frontend` e `backend`;
+        - Deve ter uma variável de ambiente `FRONT_HOST` que recebe como valor o nome do container do `frontend`
+          - Lembrando que, dentro de uma rede docker, o host de um container é indentificado pelo seu nome.
 
       - **front-end**
-       - O `todofrontend` deve rodar na porta `3000`;
-       - Deve ter como dependencia o `todobackend`;
-       - Deve ter uma variável de ambiente `REACT_APP_API_HOST` recebendo como valor o `todobackend`.
+       - O container de `todofrontend` deve rodar na porta `3000`;
+       - Deve ter como dependencia o container `backend`;
+       - Deve ter uma variável de ambiente `REACT_APP_API_HOST` que recebe como valor o nome do container do `backend`.
+          - Lembrando que, dentro de uma rede docker, o host de um container é indentificado pelo seu nome.
 
       - **back-end**
-       - O backend deve rodar na porta `3001`
+       - O container de `todobackend` deve rodar na porta `3001`
 
   - **Dica:**
     - Consulte a documentação em `./docker/todo-app/README.md`;
